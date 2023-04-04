@@ -11,7 +11,12 @@ using namespace std;
 //Z1.0
 char* alocirajTekst(const char* tekst) {
     //Implementirati funkciju
-    return nullptr;
+    if(tekst==nullptr)
+        return nullptr;
+    int duzina = strlen(tekst) + 1;
+    char* temp = new char[duzina];
+    strcpy_s(temp, duzina, tekst);
+    return temp;
 }
 
 class Datum
@@ -102,29 +107,42 @@ public:
     //Z2.1 Dflt. ctor
     Zanr() {
         //implementirati funkciju
+        setNaziv("");
+        setOpis("");
     }
     //Z2.2 user-def. ctor
     Zanr(const char* naziv, const char* opis)
     {
         //implementirati funkciju
-
+        setNaziv(naziv);
+        setOpis(opis);
     }
     //Z2.3 copy ctor
     Zanr(const Zanr& obj)
     {
-        //implementirati funkciju
+        setNaziv(obj.getNaziv());
+        setOpis(obj.getOpis());
     }
     //Z2.6
     void Ispis() {
         //implementirati funkciju
+        cout << "Naziv zanra: " << getNaziv() << endl;
+        cout << "Opis zanra: " << getOpis() << endl;
     }
     //Z2.5 destruktor
     ~Zanr()
     {
         //implementirati funkciju
-       
+        delete[] _naziv;
+        _naziv = nullptr;
     }
 
+    char* getNaziv() const { return _naziv; }
+    const char* getOpis() const { return _opis; }
+
+    void setNaziv(const char* naziv) { _naziv = alocirajTekst(naziv);}
+
+    void setOpis(const char* opis) { strcpy_s(_opis, strlen(opis) + 1, opis);}
 };
 
 class Knjiga {
@@ -157,7 +175,7 @@ public:
     }
 
     //Z3.5
-    ~Knjiga{
+    ~Knjiga() {
         //implementirati funkciju
     }
 };
