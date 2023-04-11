@@ -150,25 +150,36 @@ public:
     //Z2.1 dflt. ctor
     Autor()
     {
-        //Implementirati funkciju
     }
 
     //Z2.2 user-def. ctor
     Autor(const char* ime, const char* prezime, Datum datumRodjenja, bool spol)
     {
-        //Implementirati funkciju
+        setIme(ime);
+        setPrezime(prezime);
+        setDatumRodjenja(datumRodjenja);
+        setSpol(spol);
     }
 
     //Z2.3 copy ctor
     Autor(const Autor& obj)
     {
-        //Implementirati funkciju
+        setIme(obj.getIme());
+        setPrezime(obj.getPrezime());
+        setDatumRodjenja(obj.getDatumRodjenja());
+        setSpol(obj.getSpol());
     }
 
     //Z2.4 Operator dodjele
     Autor& operator= (const Autor& obj)
     {
-        //Implementirati funkciju
+        if (this != &obj)
+        {
+            setIme(obj.getIme());
+            setPrezime(obj.getPrezime());
+            setDatumRodjenja(obj.getDatumRodjenja());
+            setSpol(obj.getSpol());
+        }
         return *this;
     }
 
@@ -181,42 +192,55 @@ public:
     //Z2.6 Setteri
     void setIme(const char* ime)
     {
-        //Implementirati funkciju
+        _ime = alocirajTekst(ime);
     }
 
     void setPrezime(const char* prezime)
     {
-        //Implementirati funkciju
+        _prezime = alocirajTekst(prezime);
     }
 
     void setDatumRodjenja(Datum datumRodjenja)
     {
-        //Implementirati funkciju
+        if (_datumRodjenja == nullptr)
+            _datumRodjenja = new Datum();
+        *_datumRodjenja = datumRodjenja;
     }
 
     void setSpol(bool spol)
     {
-        //Implementirati funkciju
+        _spol = spol;
     }
 
     //Z2.7 dtor
     ~Autor()
     {
-        //Implementirati funkciju
+        delete[] _ime, delete[] _prezime;
+        delete _datumRodjenja;
+        _ime = _prezime = nullptr;
+        _datumRodjenja = nullptr;
     }
 
     //Z2.8 Ispisati podatke o autoru (operator <<)
     friend ostream& operator<<(ostream& COUT, const Autor& autor)
     {
-        //Implementirati funkciju
+        COUT << "Ime: " << autor.getIme() << endl;
+        COUT << "Prezime: " << autor.getPrezime() << endl;
+        COUT << "Datum rodjenja: " << autor.getDatumRodjenja() << endl;
+        COUT << "Spol: " << (autor.getSpol() == 0 ? "Muski" : "Zenski") << endl;
         return COUT;
     }
 
     //Z2.9 operator == (porediti autore po imenu, prezimenu i datumu rodjenja)
     bool operator==(const Autor& obj)
     {
-        //Implementirati funkciju
-        return false;
+        if (strcmp(getIme(), obj.getIme()) != 0)
+            return false;
+        else if (strcmp(getPrezime(), obj.getPrezime()) != 0)
+            return false;
+        else if (getDatumRodjenja() != obj.getDatumRodjenja())
+            return false;
+        return true;
     }
 };
 
@@ -228,25 +252,30 @@ public:
     //Z3.1 dflt. ctor
     Zanr()
     {
-        //Implementirati funkciju
     }
 
     //Z3.2 user-def. ctor
     Zanr(const char* naziv, const char* opis)
     {
-        //Implementirati funkciju
+        setNaziv(naziv);
+        setOpis(opis);
     }
 
     //Z3.3 copy ctor
     Zanr(const Zanr& obj)
     {
-        //Implementirati funkciju
+        setNaziv(obj.getNaziv());
+        setOpis(obj.getOpis());
     }
 
     //Z3.4 operator dodjele
     Zanr& operator=(const Zanr& obj)
     {
-        //Implementirati funkciju
+        if (this != &obj)
+        {
+            setNaziv(obj.getNaziv());
+            setOpis(obj.getOpis());
+        }
         return *this;
     }
 
@@ -257,33 +286,36 @@ public:
     //Z3.5 Setteri
     void setNaziv(const char* naziv)
     {
-        //Implementirati funkciju
+        _naziv = alocirajTekst(naziv);
     }
 
     void setOpis(const char* opis)
     {
-        //Implementirati funkciju
+        strcpy_s(_opis, strlen(opis) + 1, opis);
     }
 
     //Z3.6 dtor
     ~Zanr()
     {
-        //Implementirati funkciju
+        delete[] _naziv;
+        _naziv = nullptr;
     }
 
     //Z3.7 Ispisati podatke o zanru
-    friend ostream& operator<<(ostream& COUT, const Zanr& zanr)
-    {
-        //Implementirati funkciju
-        return COUT;
-    }
+  /*  friend */
 };
-
-//Z3.8 operator == (porediti zanrove po nazivu
+ostream& operator<<(ostream& COUT, const Zanr& zanr)
+{
+    COUT << "Naziv zanra: " << zanr.getNaziv() << endl;
+    COUT << "Opis zanra: " << zanr.getOpis();
+    return COUT;
+}
+//Z3.8 operator == (porediti zanrove po nazivu)
 bool operator== (const Zanr& z1, const Zanr& z2)
 {
-    //Implementirati funkciju
-    return false;
+    if(strcmp(z1.getNaziv(), z2.getNaziv())!=0)
+        return false;
+    return true;
 }
 
 class Knjiga {
@@ -531,63 +563,64 @@ void zadatak1() {
 
 void zadatak2()
 {
-    ////testiranje user-def. ctora
-    //Autor safak("Elif", "Safak", Datum(25, 10, 1971), 1);
+    //testiranje user-def. ctora
+    Autor safak("Elif", "Safak", Datum(25, 10, 1971), 1);
 
-    ////testiranje dflt. ctora
-    //Autor tolstoj;
-    //// testiranje settera
-    //tolstoj.setIme("Lav");
-    //tolstoj.setPrezime("Tolstoj");
-    //tolstoj.setSpol(0);
-    //tolstoj.setDatumRodjenja(Datum(9, 9, 1828));
+    //testiranje dflt. ctora
+    Autor tolstoj;
+    // testiranje settera
+    tolstoj.setIme("Lav");
+    tolstoj.setPrezime("Tolstoj");
+    tolstoj.setSpol(0);
+    tolstoj.setDatumRodjenja(Datum(9, 9, 1828));
 
-    ////testiranje operatora za ispis
-    //cout << safak << endl;
-    //cout << tolstoj << endl;
+    //testiranje operatora za ispis
+    cout << safak << endl;
+    cout << tolstoj << endl;
 
-    ////testiranje copy ctor-a
-    //Autor tolstoj_copy(tolstoj);
-    //cout << tolstoj_copy << endl;
+    //testiranje copy ctor-a
+    Autor tolstoj_copy(tolstoj);
+    cout << tolstoj_copy << endl;
 
-    //Autor sidran("Abdulah", "Sidran", Datum(2, 10, 1944), 0);
-    ////testiranje operatora dodjele (=)
-    //Autor sidran_copy;
+    Autor sidran("Abdulah", "Sidran", Datum(2, 10, 1944), 0);
+    //testiranje operatora dodjele (=)
+    Autor sidran_copy;
+    sidran_copy = sidran;
 
-    ////testiranje operatora usporedbe
-    //if (sidran == sidran_copy)
-    //    cout << "Autori su isti!";
-    //else
-    //    cout << "Rzaliciti autori!";
-    //sidran_copy = sidran;
+    //testiranje operatora usporedbe
+    if (sidran == sidran_copy)
+        cout << "Autori su isti!";
+    else
+        cout << "Rzaliciti autori!";
+
 }
 
 void zadatak3()
 {
-    ////testiranje dflt. ctora
-    //Zanr tragedija;
-    ////testiranje settera
-    //tragedija.setNaziv("Tragedija");
-    //tragedija.setOpis("Vrsta drame sa tragicnim zavrstekom.");
+    //testiranje dflt. ctora
+    Zanr tragedija;
+    //testiranje settera
+    tragedija.setNaziv("Tragedija");
+    tragedija.setOpis("Vrsta drame sa tragicnim zavrstekom.");
 
-    ////testiranje copy ctora
-    //Zanr tragedija_copy(tragedija);
+    //testiranje copy ctora
+    Zanr tragedija_copy(tragedija);
 
-    ////testiranje operatora usporedbe
-    //if (tragedija == tragedija_copy)
-    //    cout << "Zanrovi su jednaki, uspjesno implementirano!\n";
-    //else
-    //    cout << "Greska u implementaciji!\n";
+    //testiranje operatora usporedbe
+    if (tragedija == tragedija_copy)
+        cout << "Zanrovi su jednaki, uspjesno implementirano!\n";
+    else
+        cout << "Greska u implementaciji!\n";
 
-    ////testiranje user-def. ctora
-    //Zanr komedija("Komedija", "Vrsta drame sa komicnim dogadjajima i sretnim zavrsetkom.");
+    //testiranje user-def. ctora
+    Zanr komedija("Komedija", "Vrsta drame sa komicnim dogadjajima i sretnim zavrsetkom.");
 
-    //Zanr komedija_copy;
-    ////testiranje operatora dodjele (=)
-    //komedija_copy = komedija;
+    Zanr komedija_copy;
+    //testiranje operatora dodjele (=)
+    komedija_copy = komedija;
 
-    ////testiranje ispisa
-    //cout << komedija_copy << endl;
+    //testiranje ispisa
+    cout << komedija_copy << endl;
 }
 
 void zadatak4()
