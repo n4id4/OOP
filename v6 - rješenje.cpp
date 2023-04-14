@@ -10,7 +10,7 @@ using namespace std;
 // Z0.1 dinamicka alokacija niza karaktera i kopiranje
 char* alocirajTekst(const char* tekst) {
     // Implementirati funkciju
-    if(tekst==nullptr)
+    if (tekst == nullptr)
         return nullptr;
     int duzina = strlen(tekst) + 1;
     char* novi = new char[duzina];
@@ -20,9 +20,9 @@ char* alocirajTekst(const char* tekst) {
 
 // Z0.2 Funkcija koja vraca logicku vrijednost u zavisnosti da li je proslijedjena godina prijestupna ili ne
 bool prijestupnaGodina(int godina) {
-    if (godina % 400 == 0 || (godina % 4 == 0 && godina % 100 != 0))
-        return true;
-    return false;
+    // Implementirati funkciju
+    return ((godina % 4 == 0 && godina % 100 != 0) || godina % 400 == 0);
+
 }
 
 class Datum
@@ -40,7 +40,7 @@ public:
     void setDan(int dan) {
         if (_dan == nullptr)
             _dan = new int;
-        *_dan = dan; 
+        *_dan = dan;
     }
     void setMjesec(int mjesec) {
         if (_mjesec == nullptr)
@@ -70,7 +70,6 @@ public:
 
     // Z1.6 Operator = 
     Datum& operator =(const Datum& obj) {
-        // Implementirati funkciju
         if (this != &obj)
         {
             setDan(obj.getDan());
@@ -96,10 +95,9 @@ ostream& operator << (ostream& COUT, const Datum obj) {
 
 // Z1.9 Porediti dva datuma po vrijednostima atributa
 bool operator == (const Datum& d1, const Datum& d2) {
-    if(d1.getGodina()*365+d1.getMjesec()*30+d1.getDan()!=
-        d2.getGodina() * 365 + d2.getMjesec() * 30 + d2.getDan())
-        return false;
-    return true;
+    return (d1.getDan() == d2.getDan() &&
+        d1.getMjesec() == d2.getMjesec() &&
+        d1.getGodina() == d2.getGodina());
 }
 
 // Z1.10 Implementirati operator !=
@@ -109,10 +107,8 @@ bool operator != (const Datum& d1, const Datum& d2) {
 
 // Z1.11 Provjeriti da li je 'd1' veci (noviji datum) od 'd2'
 bool operator > (const Datum& d1, const Datum& d2) {
-    if (d1.getGodina() * 365 + d1.getMjesec() * 30 + d1.getDan() >
-        d2.getGodina() * 365 + d2.getMjesec() * 30 + d2.getDan())
-        return true;
-    return false;
+    return ((d1.getGodina() * 365 + d1.getMjesec() * 30 + d1.getDan())
+        > d2.getGodina() * 365 + d2.getMjesec() * 30 + d2.getDan());
 }
 // Z1.12 Provjeriti da li je 'd1' veci ili jednak (noviji datum ili isti datum) od 'd2'
 bool operator >= (const Datum& d1, const Datum& d2) {
@@ -127,18 +123,19 @@ bool operator <(const Datum& d1, const Datum& d2) {
 // Z1.14 Provjeriti da li je 'd1' manji ili jednak (stariji datum ili isti datum) od 'd2'
 bool operator <=(const Datum& d1, const Datum& d2) {
     return !(d1 > d2);
+    //return (d1 == d2 || d1 < d2);
 }
 
 // Z1.15 Od dva datuma vratiti onaj stariji
 const Datum& min(const Datum& d1, const Datum& d2) {
     // Implementirati funkciju
-    return d1;
+    return (d1 < d2 ? d1 : d2);
+
 }
 
 // Z1.16 Od dva datuma vratiti onaj noviji
 const Datum& max(const Datum& d1, const Datum& d2) {
-    // Implementirati funkciju
-    return d1;
+    return (d1 > d2 ? d1 : d2);
 }
 
 class Autor {
@@ -203,7 +200,7 @@ public:
     void setDatumRodjenja(Datum datumRodjenja)
     {
         if (_datumRodjenja == nullptr)
-            _datumRodjenja = new Datum();
+            _datumRodjenja = new Datum;
         *_datumRodjenja = datumRodjenja;
     }
 
@@ -215,9 +212,11 @@ public:
     //Z2.7 dtor
     ~Autor()
     {
-        delete[] _ime, delete[] _prezime;
+        delete[] _ime;
+        _ime = nullptr;
+        delete[] _prezime;
+        _prezime = nullptr;
         delete _datumRodjenja;
-        _ime = _prezime = nullptr;
         _datumRodjenja = nullptr;
     }
 
@@ -240,6 +239,7 @@ public:
             return false;
         else if (getDatumRodjenja() != obj.getDatumRodjenja())
             return false;
+
         return true;
     }
 };
@@ -252,6 +252,7 @@ public:
     //Z3.1 dflt. ctor
     Zanr()
     {
+        //Implementirati funkciju
     }
 
     //Z3.2 user-def. ctor
@@ -302,25 +303,23 @@ public:
     }
 
     //Z3.7 Ispisati podatke o zanru
-  /*  friend */
+    friend ostream& operator<<(ostream& c, const Zanr& zanr)
+    {
+        c << "Naziv zanra: " << zanr.getNaziv() << endl;
+        c << "Opis zanra: " << zanr.getOpis() << endl;
+        return c;
+    }
 };
-ostream& operator<<(ostream& COUT, const Zanr& zanr)
-{
-    COUT << "Naziv zanra: " << zanr.getNaziv() << endl;
-    COUT << "Opis zanra: " << zanr.getOpis();
-    return COUT;
-}
-//Z3.8 operator == (porediti zanrove po nazivu)
+
+//Z3.8 operator == (porediti zanrove po nazivu
 bool operator== (const Zanr& z1, const Zanr& z2)
 {
-    if(strcmp(z1.getNaziv(), z2.getNaziv())!=0)
-        return false;
-    return true;
+    return (strcmp(z1.getNaziv(), z2.getNaziv()) == 0);
 }
 
 class Knjiga {
     char* _naziv = nullptr;
-    int* brojStranica = nullptr;
+    int* _brojStranica = nullptr;
     Zanr _zanr;
     Autor* _autor = nullptr;
     char _kratakSadrzaj[200];
@@ -335,104 +334,142 @@ public:
     //Z4.2 user-def. ctor
     Knjiga(const char* naziv, int brojStranica, Zanr zanr, Autor autor, const char* kratakSadrzaj, Datum datumIzadavanja)
     {
-        //Implementirati funkciju
+        setNaziv(naziv);
+        setBrojStranica(brojStranica);
+        setZanr(zanr);
+        setAutor(autor);
+        setDatumIzdavanja(datumIzadavanja);
+        setKratakSadrzaj(kratakSadrzaj);
     }
 
     //Z4.3 copy ctor
     Knjiga(const Knjiga& obj)
     {
-        //Implementirati funkciju
+        setNaziv(obj.getNaziv());
+        setBrojStranica(obj.getBrojStranica());
+        setZanr(obj.getZanr());
+        setAutor(obj.getAutor());
+        setDatumIzdavanja(obj.getDatumIzdavanja());
+        setKratakSadrzaj(obj.getKratakSadrzaj());
     }
 
     //Z4.4 operator dodjele (=)
     Knjiga& operator= (const Knjiga& obj)
     {
-        //Implementirati funkciju
+        if (this != &obj)
+        {
+            setNaziv(obj.getNaziv());
+            setBrojStranica(obj.getBrojStranica());
+            setZanr(obj.getZanr());
+            setAutor(obj.getAutor());
+            setDatumIzdavanja(obj.getDatumIzdavanja());
+            setKratakSadrzaj(obj.getKratakSadrzaj());
+        }
+        return *this;
     }
 
     //Z4.5 Getteri
     const char* getNaziv()const
     {
-        //Implementirati funkciju
+        return _naziv;
     }
 
     int getBrojStranica() const
     {
-        //Implementirati funkciju
+        if (_brojStranica == nullptr)
+            return 0;
+        return *_brojStranica;
     }
 
     Zanr getZanr()const
     {
-        //Implementirati funkciju
+        return _zanr;
     }
 
     Autor getAutor()const
     {
-        //Implementirati funkciju
+        if (_autor == nullptr)
+            return Autor();
+        return *_autor;
     }
 
     const char* getKratakSadrzaj()const
     {
-        //Implementirati funkciju
+        return _kratakSadrzaj;
     }
 
     Datum getDatumIzdavanja()const
     {
-        //Implementirati funkciju
+        return _datumIzdavanja;
     }
 
     //Z4.6 Setteri
     void setNaziv(const char* naziv)
     {
-        //Implementirati funkciju
+        delete[] _naziv;
+        _naziv = alocirajTekst(naziv);
     }
 
     void setBrojStranica(int brStr)
     {
-        //Implementirati funkciju
+        if (_brojStranica == nullptr)
+            _brojStranica = new int;
+        *_brojStranica = brStr;
     }
 
     void setZanr(Zanr zanr)
     {
-        //Implementirati funkciju
+        _zanr = zanr;
     }
 
     void setAutor(Autor autor)
     {
-        //Implementirati funkciju
+        if (_autor == nullptr)
+            _autor = new Autor;
+        *_autor = autor;
     }
 
     void setKratakSadrzaj(const char* kratakSadrzaj)
     {
-        //Implementirati funkciju
+        strcpy_s(_kratakSadrzaj, strlen(kratakSadrzaj) + 1, kratakSadrzaj);
     }
 
     void setDatumIzdavanja(Datum d)
     {
-        //Implementirati funkciju
+        _datumIzdavanja = d;
     }
 
     //Z4.7 dtor
     ~Knjiga()
     {
-        //Implementirati funkciju
+        delete[] _naziv;
+        _naziv = nullptr;
+        delete _autor;
+        _autor = nullptr;
+        delete _brojStranica;
+        _brojStranica = nullptr;
     }
 
-    friend ostream& operator<<(ostream& COUT, const Knjiga& knjiga);
+   // friend ostream& operator<<(ostream& COUT, const Knjiga& knjiga);
 };
 
 //Z4.8 Ispis podataka o knjizi (operator <<)
 ostream& operator<<(ostream& COUT, const Knjiga& knjiga)
 {
-    //Implementirati funkciju
+    COUT << "Naziv knjige: " << knjiga.getNaziv() << endl;
+    COUT << "Autor knjige: " << knjiga.getAutor()<<endl;
+    COUT << "Broj stranica: " << knjiga.getBrojStranica() << endl;
+    COUT << "Zanr: " << knjiga.getZanr() << endl;
+    COUT << "Datum izdvanja: " << knjiga.getDatumIzdavanja() << endl;
+    COUT << "Kratak sadrzaj: " << knjiga.getKratakSadrzaj() << endl;
     return COUT;
 }
 
 //Z4.9 operator usporedbe (porediti knjige po nazivu i po autoru)
 bool operator== (const Knjiga& k1, const Knjiga& k2)
 {
-    //Implementirati funkciju
-    return false;
+    return (strcmp(k1.getNaziv(), k2.getNaziv()) == 0
+        && k1.getAutor() == k2.getAutor());
 }
 
 class Biblioteka {
@@ -463,7 +500,17 @@ public:
     //Z5.4 operator dodjele (=)
     Biblioteka& operator=(const Biblioteka& obj)
     {
-        //Implementirati funkciju
+        if (this != &obj)
+        {
+            setNaziv(obj.getNaziv());
+            setAdresa(obj.getAdresa());
+            setDatumOtvaranja(obj.getDatumOtvaranja());
+
+            _trenutnoKnjiga =new int(*obj._trenutnoKnjiga);
+            for (int i = 0; i < *_trenutnoKnjiga; i++)
+                _nizKnjiga[i] = obj._nizKnjiga[i];
+            
+        }
         return *this;
     }
 
@@ -528,7 +575,12 @@ public:
     //Z5.8 Ispis podataka o biblioteci
     friend ostream& operator<<(ostream& COUT, const Biblioteka& b)
     {
-        //Implementirati funkciju
+        COUT << "Naziv: " << b.getNaziv() << endl;
+        COUT << "Adresa: " << b.getAdresa() << endl;
+        COUT << "Knjige: " << endl;
+        for (int i = 0; i < b.getTrenutnoKnjiga(); i++)
+            COUT << b.getKnjigaAtI(i) << endl;
+        COUT << "Trenutno knjiga: " << b.getTrenutnoKnjiga() << endl;
         return COUT;
     }
 };
@@ -543,10 +595,10 @@ void zadatak1() {
     worldRiversDay.setDan(14);
     worldRiversDay.setMjesec(3);
     worldRiversDay.setGodina(2023);
-    cout << "World rivers day day: " << worldRiversDay << endl; //  operator <<
+    cout << "World Rivers day: " << worldRiversDay << endl; //  operator <<
 
     Datum nationalWalnutDay(worldRiversDay.getDan() - 3, worldRiversDay.getMjesec() + 2, worldRiversDay.getGodina()); // user-def. ctor
-    cout << "Walnut day: " << nationalWalnutDay << endl;
+    cout << "National walnut day: " << nationalWalnutDay << endl;
 
     Datum laborDay(worldRiversDay); // copy ctor
     laborDay.setDan(1);
@@ -586,13 +638,12 @@ void zadatak2()
     //testiranje operatora dodjele (=)
     Autor sidran_copy;
     sidran_copy = sidran;
-
     //testiranje operatora usporedbe
     if (sidran == sidran_copy)
         cout << "Autori su isti!";
     else
-        cout << "Rzaliciti autori!";
-
+        cout << "Razliciti autori!";
+    
 }
 
 void zadatak3()
@@ -637,7 +688,7 @@ void zadatak4()
 
     //// testiranje user-def. ctora
     //Knjiga anaKarenjina("Ana Karanjina", 864, tragedija, tolstoj, "Naciroko smatrana vrhuncem realizma, Tolstoj je ovu knjigu smatrao svojim prvim pravim romanom.Lik Ane je vjerojatno, makar djelomicno, inspiriran Marijom Hartung(1832. – 1919.), starijom kcerkom ruskog pjesnika Aleksandra Puskina.", Datum(1, 1, 1878));
-
+    //
     //Knjiga anaKarenjina_copy(anaKarenjina);
 
     //if (anaKarenjina == anaKarenjina_copy)
@@ -660,24 +711,24 @@ void zadatak4()
 
 void zadatak5()
 {
-    /*Autor sidran("Abdulah", "Sidran", Datum(2, 10, 1944), 0);
-    Autor safak("Elif", "Safak", Datum(25, 10, 1971), 1);
+    /*   Autor sidran("Abdulah", "Sidran", Datum(2, 10, 1944), 0);
+       Autor safak("Elif", "Safak", Datum(25, 10, 1971), 1);
 
-    Zanr poezija("Poezija", "Umjetnost koja se zasniva na izrazajnim mogucnostima jezika.");
-    Zanr fikcija("Fikcija", "Fikcija predstavlja pricanje prica koje nisu u potpunosti bazirane na cinjenicama. Bolje receno, fikcija je forma izmesljene naracije");
+       Zanr poezija("Poezija", "Umjetnost koja se zasniva na izrazajnim mogucnostima jezika.");
+       Zanr fikcija("Fikcija", "Fikcija predstavlja pricanje prica koje nisu u potpunosti bazirane na cinjenicama. Bolje receno, fikcija je forma izmesljene naracije");
 
-    Knjiga sahbaza("Sahbaza", 1400, poezija, sidran, "Sadrzi najbolje sevdalinke ovih prostora i bh. pjesme s tekstovima", Datum(2, 3, 1970));
-    Knjiga triEvineKceri("Tri Evine kceri", 368, fikcija, safak, "Elif Safak pripovijeda opseznu i dirljivu pricu koja humanizira i personalizira neke od temeljnih promjena u savremenom svijetu.", Datum(12, 6, 2016));
-    Knjiga kopileIstanbula("Kopile Istanbula", 368, fikcija, safak, "Kopile Istanbula roman je o dva naroda, turskom i armenskom, i dvije obitelji koje su povezane mracnom tajnom iz proslosti", Datum(13, 2, 2006));
+       Knjiga sahbaza("Sahbaza", 1400, poezija, sidran, "Sadrzi najbolje sevdalinke ovih prostora i bh. pjesme s tekstovima", Datum(2, 3, 1970));
+       Knjiga triEvineKceri("Tri Evine kceri", 368, fikcija, safak, "Elif Safak pripovijeda opseznu i dirljivu pricu koja humanizira i personalizira neke od temeljnih promjena u savremenom svijetu.", Datum(12, 6, 2016));
+       Knjiga kopileIstanbula("Kopile Istanbula", 368, fikcija, safak, "Kopile Istanbula roman je o dva naroda, turskom i armenskom, i dvije obitelji koje su povezane mracnom tajnom iz proslosti", Datum(13, 2, 2006));
 
-    Biblioteka narodna("Narodna biblioteka Mostar", "Marsala Tita 55", Datum(1, 1, 2000));
-    narodna.dodajKnjigu(sahbaza);
-    narodna.dodajKnjigu(kopileIstanbula);
-    narodna.dodajKnjigu(triEvineKceri);
+       Biblioteka narodna("Narodna biblioteka Mostar", "Marsala Tita 55", Datum(1, 1, 2000));
+       narodna.dodajKnjigu(sahbaza);
+       narodna.dodajKnjigu(kopileIstanbula);
+       narodna.dodajKnjigu(triEvineKceri);
 
-    Biblioteka narodna_copy;
-    narodna_copy = narodna;
-    cout << narodna_copy << endl;*/
+       Biblioteka narodna_copy;
+       narodna_copy = narodna;
+       cout << narodna_copy << endl;*/
 }
 
 void menu() {
@@ -714,8 +765,7 @@ void menu() {
 int main()
 {
     menu();
-    int a;
-    a = 10;
+
     system("pause>0");
     return 0;
 }
