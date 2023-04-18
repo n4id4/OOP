@@ -190,9 +190,8 @@ public:
 template<class T>
 ostream& operator << <>(ostream& COUT, const Vektor<T>& obj) {
     for (int i = 0; i < obj.getTrenutno(); i++)
-    {
         COUT << obj[i] << endl;
-    }
+    
     return COUT;
 }
 
@@ -363,7 +362,7 @@ bool operator != (const Sahist& obj1, const Sahist& obj2) {
 // Z4.12 :: vraca najmladjeg sahistu,
 Sahist getNajmladjeg(Vektor<Sahist>& sahisti) {
     Sahist najmladji = sahisti[0];
-    for (int i = 0; i < sahisti.getTrenutno(); i++)
+    for (int i = 1; i < sahisti.getTrenutno(); i++)
     {
         if (sahisti[i].getDatumRodjenja() > najmladji.getDatumRodjenja())
             najmladji = sahisti[i];
@@ -407,6 +406,7 @@ public:
             setLijevi(obj.getLijevi());
             setDesni(obj.getDesni());
         }
+        return *this;
     }
 };
 
