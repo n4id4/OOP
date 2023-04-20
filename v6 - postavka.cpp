@@ -9,8 +9,8 @@ using namespace std;
 
 // Z0.1 dinamicka alokacija niza karaktera i kopiranje
 char* alocirajTekst(const char* tekst) {
-	// Implementirati funkciju
-	return nullptr;
+    // Implementirati funkciju
+    return nullptr;
 }
 
 // Z0.2 Funkcija koja vraca logicku vrijednost u zavisnosti da li je proslijedjena godina prijestupna ili ne
@@ -120,7 +120,7 @@ const Datum& max(const Datum& d1, const Datum& d2) {
 class Autor {
     char* _ime = nullptr;
     char* _prezime = nullptr;
-    Datum* _datumRodjenja=nullptr;
+    Datum* _datumRodjenja = nullptr;
     bool _spol;
 public:
     //Z2.1 dflt. ctor
@@ -263,12 +263,11 @@ bool operator== (const Zanr& z1, const Zanr& z2)
 }
 
 class Knjiga {
-    char* _naziv=nullptr;
-    int* brojStranica=nullptr;
+    char* _naziv = nullptr;
+    int* brojStranica = nullptr;
     Zanr _zanr;
-    Autor* _autor=nullptr;
+    Autor* _autor = nullptr;
     char _kratakSadrzaj[200];
-    Datum _datumIzdavanja;
 public:
     //Z4.1 dflt. ctor
     Knjiga()
@@ -277,7 +276,7 @@ public:
     }
 
     //Z4.2 user-def. ctor
-    Knjiga(const char* naziv, int brojStranica, Zanr zanr, Autor autor, const char* kratakSadrzaj, Datum datumIzadavanja)
+    Knjiga(const char* naziv, int brojStranica, Zanr zanr, Autor autor, const char* kratakSadrzaj)
     {
         //Implementirati funkciju
     }
@@ -320,11 +319,6 @@ public:
         //Implementirati funkciju
     }
 
-    Datum getDatumIzdavanja()const
-    {
-        //Implementirati funkciju
-    }
-
     //Z4.6 Setteri
     void setNaziv(const char* naziv)
     {
@@ -347,11 +341,6 @@ public:
     }
 
     void setKratakSadrzaj(const char* kratakSadrzaj)
-    {
-        //Implementirati funkciju
-    }
-
-    void setDatumIzdavanja(Datum d)
     {
         //Implementirati funkciju
     }
@@ -433,7 +422,7 @@ public:
     }
 
     Knjiga getKnjigaAtI(int index)const
-    {        
+    {
         //Implementirati funkciju
     }
 
@@ -441,7 +430,7 @@ public:
     {
         //Implementirati funkciju
     }
-    
+
     //Z5.6 Setteri
     void setNaziv(const char* naziv)
     {
@@ -487,10 +476,10 @@ void zadatak1() {
     worldRiversDay.setDan(14);
     worldRiversDay.setMjesec(3);
     worldRiversDay.setGodina(2023);
-    cout << "Star Wars day: " << worldRiversDay << endl; //  operator <<
+    cout << "World rivers day: " << worldRiversDay << endl; //  operator <<
 
     Datum nationalWalnutDay(worldRiversDay.getDan() - 3, worldRiversDay.getMjesec() + 2, worldRiversDay.getGodina()); // user-def. ctor
-    cout << "World Ufo day: " << nationalWalnutDay << endl;
+    cout << "National walnut day: " << nationalWalnutDay << endl;
 
     Datum laborDay(worldRiversDay); // copy ctor
     laborDay.setDan(1);
@@ -529,13 +518,13 @@ void zadatak2()
     Autor sidran("Abdulah", "Sidran", Datum(2, 10, 1944), 0);
     //testiranje operatora dodjele (=)
     Autor sidran_copy;
-
+    sidran_copy = sidran;
     //testiranje operatora usporedbe
     if (sidran == sidran_copy)
         cout << "Autori su isti!";
     else
         cout << "Rzaliciti autori!";
-    sidran_copy = sidran;
+   
 }
 
 void zadatak3()
@@ -557,7 +546,7 @@ void zadatak3()
 
     //testiranje user-def. ctora
     Zanr komedija("Komedija", "Vrsta drame sa komicnim dogadjajima i sretnim zavrsetkom.");
-   
+
     Zanr komedija_copy;
     //testiranje operatora dodjele (=)
     komedija_copy = komedija;
@@ -568,56 +557,21 @@ void zadatak3()
 
 void zadatak4()
 {
-    //testiranje dflt. ctora
-    Autor tolstoj;
-    // testiranje settera
-    tolstoj.setIme("Lav");
-    tolstoj.setPrezime("Tolstoj");
-    tolstoj.setSpol(0);
-    tolstoj.setDatumRodjenja(Datum(9, 9, 1828));
-
-    Zanr tragedija("Tragedija", "Vrsta drame sa tragicnim zavrsetkom.");
-
-    // testiranje user-def. ctora
-    Knjiga anaKarenjina("Ana Karanjina", 864, tragedija, tolstoj, "Naciroko smatrana vrhuncem realizma, Tolstoj je ovu knjigu smatrao svojim prvim pravim romanom.Lik Ane je vjerojatno, makar djelomicno, inspiriran Marijom Hartung(1832. – 1919.), starijom kcerkom ruskog pjesnika Aleksandra Puskina.", Datum(1, 1, 1878));
-    
-    Knjiga anaKarenjina_copy(anaKarenjina);
-
-    if (anaKarenjina == anaKarenjina_copy)
-        cout << "Knjige su iste\n";
-    else
-        cout << "Razlicite knjige\n";
-    //testiranje dflt. ctora
-    Knjiga obiteljskaSreca;
-    //testiranje settera
-    obiteljskaSreca.setAutor(tolstoj);
-    obiteljskaSreca.setBrojStranica(590);
-    obiteljskaSreca.setDatumIzdavanja(Datum(2, 2, 1859));
-    obiteljskaSreca.setZanr(tragedija);
-    obiteljskaSreca.setKratakSadrzaj("Jos jedan u nizu Tolstojevih romana, prvobitno objavljen 1859. godine. ");
-
-    //Testiranje operatora za ispis
-    cout << anaKarenjina << endl;
-    cout << obiteljskaSreca << endl;
-}
-
-void zadatak5()
-{
     Autor sidran("Abdulah", "Sidran", Datum(2, 10, 1944), 0);
     Autor safak("Elif", "Safak", Datum(25, 10, 1971), 1);
 
     Zanr poezija("Poezija", "Umjetnost koja se zasniva na izrazajnim mogucnostima jezika.");
     Zanr fikcija("Fikcija", "Fikcija predstavlja pricanje prica koje nisu u potpunosti bazirane na cinjenicama. Bolje receno, fikcija je forma izmesljene naracije");
 
-    Knjiga sahbaza("Sahbaza", 1400, poezija, sidran, "Sadrzi najbolje sevdalinke ovih prostora i bh. pjesme s tekstovima", Datum(2, 3, 1970));
-    Knjiga triEvineKceri("Tri Evine kceri", 368, fikcija, safak, "Elif Safak pripovijeda opseznu i dirljivu pricu koja humanizira i personalizira neke od temeljnih promjena u savremenom svijetu.", Datum(12, 6, 2016));
-    Knjiga kopileIstanbula("Kopile Istanbula", 368, fikcija, safak, "Kopile Istanbula roman je o dva naroda, turskom i armenskom, i dvije obitelji koje su povezane mracnom tajnom iz proslosti", Datum(13, 2, 2006));
+    Knjiga sahbaza("Sahbaza", 1400, poezija, sidran, "Sadrzi najbolje sevdalinke ovih prostora i bh. pjesme s tekstovima");
+    Knjiga triEvineKceri("Tri Evine kceri", 368, fikcija, safak, "Elif Safak pripovijeda opseznu i dirljivu pricu koja humanizira i personalizira neke od temeljnih promjena u savremenom svijetu." );
+    Knjiga kopileIstanbula("Kopile Istanbula", 368, fikcija, safak, "Kopile Istanbula roman je o dva naroda, turskom i armenskom, i dvije obitelji koje su povezane mracnom tajnom iz proslosti");
 
     Biblioteka narodna("Narodna biblioteka Mostar", "Marsala Tita 55", Datum(1, 1, 2000));
     narodna.dodajKnjigu(sahbaza);
     narodna.dodajKnjigu(kopileIstanbula);
     narodna.dodajKnjigu(triEvineKceri);
-    
+
     Biblioteka narodna_copy;
     narodna_copy = narodna;
     cout << narodna_copy << endl;
@@ -634,7 +588,6 @@ void menu() {
             cout << "(2) zadatak 2" << endl;
             cout << "(3) zadatak 3" << endl;
             cout << "(4) zadatak 4" << endl;
-            cout << "(5) zadatak 5" << endl;
             cout << "Unesite odgovarajuci broj zadatka za testiranje: -->: ";
             cin >> izbor;
             cout << endl;
@@ -644,7 +597,6 @@ void menu() {
         case 2: zadatak2(); cout << "zadatak 2. Done." << endl; break;
         case 3: zadatak3(); cout << "zadatak 3. Done." << endl; break;
         case 4: zadatak4(); cout << "zadatak 4. Done." << endl; break;
-        case 5: zadatak5(); cout << "zadatak 5. Done." << endl; break;
         default:break;
         }
         do {
@@ -658,6 +610,6 @@ int main()
 {
     menu();
 
-	system("pause>0");
-	return 0;
+    system("pause>0");
+    return 0;
 }
