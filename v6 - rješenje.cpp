@@ -318,12 +318,11 @@ bool operator== (const Zanr& z1, const Zanr& z2)
 }
 
 class Knjiga {
-    char* _naziv = nullptr;
+    char* _naziv;
     int* _brojStranica = nullptr;
     Zanr _zanr;
     Autor* _autor = nullptr;
     char _kratakSadrzaj[200];
-    Datum _datumIzdavanja;
 public:
     //Z4.1 dflt. ctor
     Knjiga()
@@ -332,13 +331,12 @@ public:
     }
 
     //Z4.2 user-def. ctor
-    Knjiga(const char* naziv, int brojStranica, Zanr zanr, Autor autor, const char* kratakSadrzaj, Datum datumIzadavanja)
+    Knjiga(const char* naziv, int brojStranica, Zanr zanr, Autor autor, const char* kratakSadrzaj)
     {
         setNaziv(naziv);
         setBrojStranica(brojStranica);
         setZanr(zanr);
         setAutor(autor);
-        setDatumIzdavanja(datumIzadavanja);
         setKratakSadrzaj(kratakSadrzaj);
     }
 
@@ -349,7 +347,6 @@ public:
         setBrojStranica(obj.getBrojStranica());
         setZanr(obj.getZanr());
         setAutor(obj.getAutor());
-        setDatumIzdavanja(obj.getDatumIzdavanja());
         setKratakSadrzaj(obj.getKratakSadrzaj());
     }
 
@@ -362,7 +359,6 @@ public:
             setBrojStranica(obj.getBrojStranica());
             setZanr(obj.getZanr());
             setAutor(obj.getAutor());
-            setDatumIzdavanja(obj.getDatumIzdavanja());
             setKratakSadrzaj(obj.getKratakSadrzaj());
         }
         return *this;
@@ -398,15 +394,11 @@ public:
         return _kratakSadrzaj;
     }
 
-    Datum getDatumIzdavanja()const
-    {
-        return _datumIzdavanja;
-    }
-
+ 
     //Z4.6 Setteri
     void setNaziv(const char* naziv)
     {
-        delete[] _naziv;
+//        delete[] _naziv;
         _naziv = alocirajTekst(naziv);
     }
 
@@ -434,11 +426,6 @@ public:
         strcpy_s(_kratakSadrzaj, strlen(kratakSadrzaj) + 1, kratakSadrzaj);
     }
 
-    void setDatumIzdavanja(Datum d)
-    {
-        _datumIzdavanja = d;
-    }
-
     //Z4.7 dtor
     ~Knjiga()
     {
@@ -450,17 +437,16 @@ public:
         _brojStranica = nullptr;
     }
 
-   // friend ostream& operator<<(ostream& COUT, const Knjiga& knjiga);
+    // friend ostream& operator<<(ostream& COUT, const Knjiga& knjiga);
 };
 
 //Z4.8 Ispis podataka o knjizi (operator <<)
 ostream& operator<<(ostream& COUT, const Knjiga& knjiga)
 {
     COUT << "Naziv knjige: " << knjiga.getNaziv() << endl;
-    COUT << "Autor knjige: " << knjiga.getAutor()<<endl;
+    COUT << "Autor knjige: " << knjiga.getAutor() << endl;
     COUT << "Broj stranica: " << knjiga.getBrojStranica() << endl;
     COUT << "Zanr: " << knjiga.getZanr() << endl;
-    COUT << "Datum izdvanja: " << knjiga.getDatumIzdavanja() << endl;
     COUT << "Kratak sadrzaj: " << knjiga.getKratakSadrzaj() << endl;
     return COUT;
 }
@@ -483,18 +469,24 @@ public:
     Biblioteka()
     {
         //Implementirati funkciju
+        _trenutnoKnjiga = new int(0);
     }
 
     //Z5.2 user-def. ctor
     Biblioteka(const char* naziv, const char* adresa, Datum datumOtvaranja)
     {
-        //Implementirati funkciju
+        setNaziv(naziv);
+        setAdresa(adresa);
+        setDatumOtvaranja(datumOtvaranja);
     }
 
     //Z5.3 copy ctor
     Biblioteka(const Biblioteka& obj)
     {
-        //Implementirati funkciju
+        setNaziv(obj.getNaziv());
+        setAdresa(obj.getAdresa());
+        setDatumOtvaranja(obj.getDatumOtvaranja());
+        setKnjige(*_trenutnoKnjiga, obj._nizKnjiga);
     }
 
     //Z5.4 operator dodjele (=)
@@ -506,10 +498,10 @@ public:
             setAdresa(obj.getAdresa());
             setDatumOtvaranja(obj.getDatumOtvaranja());
 
-            _trenutnoKnjiga =new int(*obj._trenutnoKnjiga);
+            _trenutnoKnjiga = new int(*obj._trenutnoKnjiga);
             for (int i = 0; i < *_trenutnoKnjiga; i++)
                 _nizKnjiga[i] = obj._nizKnjiga[i];
-            
+
         }
         return *this;
     }
@@ -517,59 +509,87 @@ public:
     //Z5.5 Getteri
     const char* getNaziv()const
     {
-        //Implementirati funkciju
+        return _naziv;
     }
 
     const char* getAdresa()const
     {
-        //Implementirati funkciju
+        return _adresa;
     }
 
     Datum getDatumOtvaranja()const
     {
-        //Implementirati funkciju
+        return _datumOtvaranja;
     }
 
     int getTrenutnoKnjiga()const
     {
-        //Implementirati funkciju
+        if (_trenutnoKnjiga == nullptr)
+            return 0;
+        return *_trenutnoKnjiga;
     }
 
     Knjiga getKnjigaAtI(int index)const
     {
-        //Implementirati funkciju
+        if (index < 0 || index > *_trenutnoKnjiga)
+            return _nizKnjiga[0];
+        return _nizKnjiga[index];
     }
 
     void dodajKnjigu(Knjiga& k)
     {
-        //Implementirati funkciju
+        if (_trenutnoKnjiga == nullptr)
+            _trenutnoKnjiga = new int(0);
+        Knjiga* temp = _nizKnjiga;
+        _nizKnjiga = new Knjiga[*_trenutnoKnjiga + 1];
+        for (int i = 0; i < *_trenutnoKnjiga; i++)
+            _nizKnjiga[i] = temp[i];
+        
+        _nizKnjiga[*_trenutnoKnjiga] = k;
+        (*_trenutnoKnjiga)++;
+        delete[] temp;
+        
     }
 
     //Z5.6 Setteri
     void setNaziv(const char* naziv)
     {
-        //Implementirati funkciju
+        delete[] _naziv;
+        _naziv = alocirajTekst(naziv);
     }
 
     void setAdresa(const char* adresa)
     {
-        //Implementirati funkciju
+        strcpy_s(_adresa, strlen(adresa) + 1, adresa);
     }
 
     void setDatumOtvaranja(Datum d)
     {
-        //Implementirati funkciju
+        _datumOtvaranja = d;
     }
 
     void setKnjige(int trenutnoKnjiga, Knjiga* knjige = nullptr)
     {
-        //Implementirati funkciju
+        if (_trenutnoKnjiga == nullptr)
+            _trenutnoKnjiga = new int;
+        *_trenutnoKnjiga = trenutnoKnjiga;
+        if (_nizKnjiga == nullptr)
+            delete[] _nizKnjiga;
+        _nizKnjiga = new Knjiga[*_trenutnoKnjiga];
+        for (int i = 0; i < *_trenutnoKnjiga; i++)
+            dodajKnjigu(knjige[i]);
+        
     }
 
     //Z5.7 dtor
     ~Biblioteka()
     {
-        //Implementirati funkciju
+        delete[] _nizKnjiga;
+        _nizKnjiga = nullptr;
+        delete _trenutnoKnjiga;
+        _trenutnoKnjiga = nullptr;
+        delete[] _naziv;
+        _naziv = nullptr;
     }
 
     //Z5.8 Ispis podataka o biblioteci
@@ -643,7 +663,7 @@ void zadatak2()
         cout << "Autori su isti!";
     else
         cout << "Razliciti autori!";
-    
+
 }
 
 void zadatak3()
@@ -674,61 +694,25 @@ void zadatak3()
     cout << komedija_copy << endl;
 }
 
+
 void zadatak4()
 {
-    ////testiranje dflt. ctora
-    //Autor tolstoj;
-    //// testiranje settera
-    //tolstoj.setIme("Lav");
-    //tolstoj.setPrezime("Tolstoj");
-    //tolstoj.setSpol(0);
-    //tolstoj.setDatumRodjenja(Datum(9, 9, 1828));
-
-    //Zanr tragedija("Tragedija", "Vrsta drame sa tragicnim zavrsetkom.");
-
-    //// testiranje user-def. ctora
-    //Knjiga anaKarenjina("Ana Karanjina", 864, tragedija, tolstoj, "Naciroko smatrana vrhuncem realizma, Tolstoj je ovu knjigu smatrao svojim prvim pravim romanom.Lik Ane je vjerojatno, makar djelomicno, inspiriran Marijom Hartung(1832. – 1919.), starijom kcerkom ruskog pjesnika Aleksandra Puskina.", Datum(1, 1, 1878));
-    //
-    //Knjiga anaKarenjina_copy(anaKarenjina);
-
-    //if (anaKarenjina == anaKarenjina_copy)
-    //    cout << "Knjige su iste\n";
-    //else
-    //    cout << "Razlicite knjige\n";
-    ////testiranje dflt. ctora
-    //Knjiga obiteljskaSreca;
-    ////testiranje settera
-    //obiteljskaSreca.setAutor(tolstoj);
-    //obiteljskaSreca.setBrojStranica(590);
-    //obiteljskaSreca.setDatumIzdavanja(Datum(2, 2, 1859));
-    //obiteljskaSreca.setZanr(tragedija);
-    //obiteljskaSreca.setKratakSadrzaj("Jos jedan u nizu Tolstojevih romana, prvobitno objavljen 1859. godine. ");
-
-    ////Testiranje operatora za ispis
-    //cout << anaKarenjina << endl;
-    //cout << obiteljskaSreca << endl;
-}
-
-void zadatak5()
-{
-    /*   Autor sidran("Abdulah", "Sidran", Datum(2, 10, 1944), 0);
+       Autor sidran("Abdulah", "Sidran", Datum(2, 10, 1944), 0);
        Autor safak("Elif", "Safak", Datum(25, 10, 1971), 1);
 
        Zanr poezija("Poezija", "Umjetnost koja se zasniva na izrazajnim mogucnostima jezika.");
        Zanr fikcija("Fikcija", "Fikcija predstavlja pricanje prica koje nisu u potpunosti bazirane na cinjenicama. Bolje receno, fikcija je forma izmesljene naracije");
 
-       Knjiga sahbaza("Sahbaza", 1400, poezija, sidran, "Sadrzi najbolje sevdalinke ovih prostora i bh. pjesme s tekstovima", Datum(2, 3, 1970));
-       Knjiga triEvineKceri("Tri Evine kceri", 368, fikcija, safak, "Elif Safak pripovijeda opseznu i dirljivu pricu koja humanizira i personalizira neke od temeljnih promjena u savremenom svijetu.", Datum(12, 6, 2016));
-       Knjiga kopileIstanbula("Kopile Istanbula", 368, fikcija, safak, "Kopile Istanbula roman je o dva naroda, turskom i armenskom, i dvije obitelji koje su povezane mracnom tajnom iz proslosti", Datum(13, 2, 2006));
+       Knjiga sahbaza("Sahbaza", 1400, poezija, sidran, "Sadrzi najbolje sevdalinke ovih prostora i bh. pjesme s tekstovima");
+       Knjiga triEvineKceri("Tri Evine kceri", 368, fikcija, safak, "Elif Safak pripovijeda opseznu i dirljivu pricu koja humanizira i personalizira neke od temeljnih promjena u savremenom svijetu." );
+       Knjiga kopileIstanbula("Kopile Istanbula", 368, fikcija, safak, "Kopile Istanbula roman je o dva naroda, turskom i armenskom, i dvije obitelji koje su povezane mracnom tajnom iz proslosti");
 
        Biblioteka narodna("Narodna biblioteka Mostar", "Marsala Tita 55", Datum(1, 1, 2000));
        narodna.dodajKnjigu(sahbaza);
        narodna.dodajKnjigu(kopileIstanbula);
        narodna.dodajKnjigu(triEvineKceri);
 
-       Biblioteka narodna_copy;
-       narodna_copy = narodna;
-       cout << narodna_copy << endl;*/
+       cout << narodna << endl;
 }
 
 void menu() {
@@ -742,7 +726,6 @@ void menu() {
             cout << "(2) zadatak 2" << endl;
             cout << "(3) zadatak 3" << endl;
             cout << "(4) zadatak 4" << endl;
-            cout << "(5) zadatak 5" << endl;
             cout << "Unesite odgovarajuci broj zadatka za testiranje: -->: ";
             cin >> izbor;
             cout << endl;
@@ -752,7 +735,6 @@ void menu() {
         case 2: zadatak2(); cout << "zadatak 2. Done." << endl; break;
         case 3: zadatak3(); cout << "zadatak 3. Done." << endl; break;
         case 4: zadatak4(); cout << "zadatak 4. Done." << endl; break;
-        case 5: zadatak5(); cout << "zadatak 5. Done." << endl; break;
         default:break;
         }
         do {
