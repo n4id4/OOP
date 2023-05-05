@@ -29,8 +29,7 @@ public:
     Vrijeme(int sati, int minute, int sekunde);
     //Z1.4
     Vrijeme(const Vrijeme& obj);
-    //Z1.5
-    Vrijeme(Vrijeme&& obj);
+
     //Z1.6
     Vrijeme& operator =(const Vrijeme& obj);
     //Z1.7
@@ -72,8 +71,7 @@ public:
     DatumVrijeme(int dan, int mjesec, int godina, int sati, int minute, int sekunde);
     //Z2.4
     DatumVrijeme(const DatumVrijeme& obj);
-    //Z2.5
-    DatumVrijeme(DatumVrijeme&& obj);
+   
     //Z2.6 
     DatumVrijeme& operator =(const DatumVrijeme& obj);
     //Z2.7
@@ -113,8 +111,7 @@ public:
     Array(bool omoguciDupliranje = true);
     //Z3.2
     Array(const Array<T, max>& obj);
-    //Z3.3
-    Array(Array<T, max>&& obj);
+
     //Z3.4
     Array<T, max>& operator=(const Array<T, max>& obj);
 
@@ -149,24 +146,19 @@ bool operator != (const Array<T, max>& arr1, const Array<T, max>& arr2);
 
 class Osoba {
 protected:
-    shared_ptr<char> _ime;
-    shared_ptr<char> _prezime;
-    unique_ptr<DatumVrijeme> _datumRodjenja;
+    char* _ime;
+    char* _prezime;
+    DatumVrijeme* _datumRodjenja;
     Spol _spol;
 public:
-    __declspec(property (get = GetIme, put = SetIme)) const char* Ime;
-    __declspec(property (get = GetPrezime, put = SetPrezime)) const char* Prezime;
-    __declspec(property (get = GetDatumRodjenja, put = SetDatumRodjenja)) DatumVrijeme DatumRodjenja;
-    __declspec(property (get = GetSpol, put = SetSpol)) Spol Spol_;
-
+  
     //Z4.1
     Osoba(Spol spol = Spol::Zenski);
     //Z4.2
     Osoba(const char* ime, const char* prezime, DatumVrijeme datumRodjenja, Spol spol);
     //Z4.3
     Osoba(const Osoba& obj);
-    //Z4.4
-    Osoba(Osoba&& obj);
+
     //Z4.5
     Osoba& operator = (const Osoba& obj);
     //Z4.6
@@ -191,19 +183,15 @@ bool operator != (const Osoba& o1, const Osoba& o2);
 class Pjevac : public Osoba {
     const char* _zanr;
     Array<const char*, 10> _instrumenti;
-    unique_ptr<char> _aktivan; // Npr. 1978 - present
+    char* _aktivan; // Npr. 1978 - present
 public:
-    __declspec(property (get = GetZanr, put = SetZanr)) const char* Zanr;
-    __declspec(property (get = GetInstrumenti)) Array<const char*, 10> Instrumenti;
-    __declspec(property (get = GetAktivan, put = SetAktivan)) const char* Aktivan;
     //Z5.1
     Pjevac();
     //Z5.2
     Pjevac(const char* ime, const char* prezime, DatumVrijeme dv, Spol sp, const char* zanr, const char* aktivan);
     //Z5.3
     Pjevac(const Pjevac& obj);
-    //Z5.4
-    Pjevac(Pjevac&& obj);
+
     //Z5.5
     Pjevac& operator = (const Pjevac& obj);
     //Z5.6
@@ -228,7 +216,7 @@ class Pjesma {
     const char* _naziv;
     char* _tekst;
     pair<int, int> _trajanje; // <minute, sekunde> [Po defaultu postaviti na <0,0>]
-    shared_ptr<char> _tekstopisac;
+    char* _tekstopisac;
     int _trenutnoZanrova;
     char* _zanrovi[5] = { nullptr };
 public:
@@ -238,8 +226,7 @@ public:
     Pjesma(const char* naziv, const char* tekst, pair<int, int> trajanje, const char* tekstopisac);
     //Z6.3
     Pjesma(const Pjesma& obj);
-    //Z6.4
-    Pjesma(Pjesma&& obj);
+
     //Z6.5
     Pjesma& operator = (const Pjesma& obj);
     //Z6.6
@@ -278,8 +265,7 @@ public:
     Album(const char* naziv, Pjevac pjevac);
     //Z7.3
     Album(const Album& obj);
-    //Z7.4
-    Album(Album&& obj);
+
     //Z7.5
     Album& operator =(const Album& obj);
     //Z7.6
@@ -398,13 +384,14 @@ void Zadatak3() {
 }
 void Zadatak4() {
     Osoba realDonaldTrump;
-    realDonaldTrump.Ime = "Donald J.";
-    realDonaldTrump.Prezime = "Trump";
-    realDonaldTrump.DatumRodjenja = DatumVrijeme(13, 5, 1945, 17, 30, 0);
-    realDonaldTrump.Spol_ = Spol::Muski;
+    realDonaldTrump.SetIme( "Donald J.");
+    realDonaldTrump.SetPrezime( "Trump");
+    realDonaldTrump.SetDatumRodjenja( DatumVrijeme(13, 5, 1945, 17, 30, 0));
+    realDonaldTrump.SetSpol( Spol::Muski);
     cout << realDonaldTrump << endl;
 
-    Osoba jobsPresident(realDonaldTrump.Ime, realDonaldTrump.Prezime, realDonaldTrump.DatumRodjenja, realDonaldTrump.Spol_);
+    Osoba jobsPresident(realDonaldTrump.GetIme(), realDonaldTrump.GetPrezime(), 
+        realDonaldTrump.GetDatumRodjenja(), realDonaldTrump.GetSpol());
     IspisiPoruku("User-defined ctor", jobsPresident == realDonaldTrump);
     Osoba borisJohnson(realDonaldTrump);
     IspisiPoruku("Copy ctor", borisJohnson == realDonaldTrump);
@@ -418,19 +405,20 @@ void Zadatak4() {
 }
 void Zadatak5() {
     Pjevac theRocketMan;
-    theRocketMan.Ime = "Kim";
-    theRocketMan.Prezime = "Jong-un";
-    theRocketMan.DatumRodjenja = DatumVrijeme(32, 12, 1940, 01, 00, 00);
-    theRocketMan.Spol_ = Spol::Muski;
-    theRocketMan.Zanr = "K-pop";
-    theRocketMan.Aktivan = "2011-present";
+    theRocketMan.SetIme( "Kim");
+    theRocketMan.SetPrezime ("Jong-un");
+    theRocketMan.SetDatumRodjenja( DatumVrijeme(32, 12, 1940, 01, 00, 00));
+    theRocketMan.SetSpol( Spol::Muski);
+    theRocketMan.SetZanr ("K-pop");
+    theRocketMan.SetAktivan( "2011-present");
     theRocketMan.DodajInstrument("bubnjevi");
     theRocketMan.DodajInstrument("bongo");
     theRocketMan.DodajInstrument("klavir");
     cout << theRocketMan << endl;
 
-    Pjevac supremeFrontman(theRocketMan.Ime, theRocketMan.Prezime,
-        theRocketMan.DatumRodjenja, theRocketMan.Spol_, theRocketMan.Zanr, theRocketMan.Aktivan);
+    Pjevac supremeFrontman(theRocketMan.GetIme(), theRocketMan.GetPrezime(),
+        theRocketMan.GetDatumRodjenja(), theRocketMan.GetSpol(), theRocketMan.GetZanr(),
+        theRocketMan.GetAktivan());
     supremeFrontman.DodajInstrument("bubnjevi");
     supremeFrontman.DodajInstrument("bongo");
     supremeFrontman.DodajInstrument("klavir");
