@@ -33,7 +33,7 @@ public:
         _funkcija = funkcija;
     }
     //Z0.5
-    Greska(const Greska& obj):exception(obj)
+    Greska(const Greska& obj) :exception(obj)
     {
         SetLinija(obj.GetLinija());
         SetFunkcija(obj.GetFunkcija());
@@ -79,7 +79,7 @@ class Vektor {
 private:
     int _trenutno;
     int _maxElemenata;
-    T* _elementi=nullptr;
+    T* _elementi = nullptr;
 public:
     //Z1.1
     Vektor(int maxElemenata = 10)
@@ -133,7 +133,7 @@ public:
         _elementi = new T[_maxElemenata];
         for (int i = 0; i < _trenutno; i++)
             _elementi[i] = temp[i];
-        
+
     }
 
     //Z1.7 :: Dodavanje novog elementa 
@@ -214,7 +214,7 @@ ostream& operator << <>(ostream& COUT, const Vektor<T>& obj)
     COUT << "Elementi: " << endl;
     for (int i = 0; i < obj.GetTrenutno(); i++)
         COUT << obj[i] << endl;
-    
+
     return COUT;
 }
 //Z1.17
@@ -272,7 +272,7 @@ ostream& operator << (ostream& COUT, const Boja& obj)
     else if (obj == Boja::Bijela)
         COUT << "Bijela";
     else if (obj == Boja::Crna)
-        COUT << "Crna";    
+        COUT << "Crna";
     else if (obj == Boja::Crvena)
         COUT << "Crvena";
     return COUT;
@@ -318,12 +318,12 @@ public:
     }
     const char* GetIme() const { return _imePrezime.first; }
     const char* GetPrezime() const { return _imePrezime.second; }
-    Spol GetSpol() const { 
+    Spol GetSpol() const {
         if (_spol == nullptr)
             return Spol::Muski;
-        return *_spol; 
+        return *_spol;
     }
-    float GetVisina() const{
+    float GetVisina() const {
         if (_visina == nullptr)
             return 0.0f;
         return *_visina;
@@ -445,64 +445,189 @@ protected:
     Vektor<const char*> _osvojeniNaslovi;
     int* _ranking;
 public:
-    Teniser();
+    Teniser() {
+        SetRanking(0);
+    }
     //Z4.2
     Teniser(const char* jmbg, const char* ime, const char* prezime, Spol spol, float visina, Boja bojaOciju, Boja bojaKose,
-        Vektor<const char*> naslovi, int ranking);
+        Vektor<const char*> naslovi, int ranking) : Osoba(jmbg,ime,prezime, spol, visina, bojaOciju, bojaKose) {
+        SetOsvojeniNaslovi(naslovi);
+        SetRanking(ranking);
+    }
     //Z4.3
-    Teniser(const Teniser& obj);
+    Teniser(const Teniser& obj) : Osoba(obj) {
+        SetOsvojeniNaslovi(obj.GetOsvojeniNaslovi());
+        SetRanking(obj.GetRanking());
+    }
     //Z4.4
-    Vektor<const char*> GetOsvojeniNaslovi() const;
-    int GetRanking() const;
+    Vektor<const char*> GetOsvojeniNaslovi() const { return _osvojeniNaslovi; }
+    int GetRanking() const {
+        if (_ranking == nullptr)
+            return 0;
+        return *_ranking;
+    }
     //Z4.6
-    void SetOsvojeniNaslovi(Vektor<const char*> naslovi);
-    void SetRanking(int ranking);
+    void SetOsvojeniNaslovi(Vektor<const char*> naslovi)
+    {
+        _osvojeniNaslovi = naslovi;
+    }
+    void SetRanking(int ranking)
+    {
+        if (_ranking == nullptr)
+            _ranking = new int;
+        *_ranking = ranking;
+    }
     //Z4.7
-    Teniser& operator = (const Teniser& obj);
+    Teniser& operator = (const Teniser& obj)
+    {
+        if (this != &obj)
+        {
+            SetOsvojeniNaslovi(obj.GetOsvojeniNaslovi());
+            SetRanking(obj.GetRanking());
+            (Osoba&)(*this) = obj;
+        }
+        return *this;
+    }
     //Z4.8
-    void DodajOsvojeniNaslov(const char* naslov);
+    void DodajOsvojeniNaslov(const char* naslov)
+    {
+        _osvojeniNaslovi += naslov;
+    }
     //Z4.9
-    ~Teniser();
+    ~Teniser()
+    {
+        delete _ranking;
+        _ranking = nullptr;
+    }
 };
 //Z4.10
-ostream& operator <<(ostream& COUT, const Teniser& teniser);
+ostream& operator <<(ostream& COUT, const Teniser& teniser)
+{
+    COUT << "Osnovni podaci:\n";
+    COUT << (Osoba&)(teniser) << endl;
+    COUT << "Osvojeni naslovi: ";
+    COUT << teniser.GetOsvojeniNaslovi() << endl;
+    COUT << "Ranking: " << teniser.GetRanking() << endl;
+    return COUT;
+}
 //Z4.11
-bool operator == (const Teniser& t1, const Teniser& t2);
+bool operator == (const Teniser& t1, const Teniser& t2)
+{
+    if ((Osoba&)(t1) != (Osoba&)(t2))
+        return false;
+    else if (t1.GetRanking() != t2.GetRanking())
+        return false;
+    else if (t1.GetOsvojeniNaslovi().GetTrenutno() != t2.GetOsvojeniNaslovi().GetTrenutno())
+        return false;
+    else
+        for (int i = 0; i < t1.GetOsvojeniNaslovi().GetTrenutno(); i++)
+            if (strcmp(t1.GetOsvojeniNaslovi().GetElementi()[i], t2.GetOsvojeniNaslovi().GetElementi()[i]) != 0)
+                return false;
+    return true;
+}
 //Z4.12
-bool operator != (const Teniser& t1, const Teniser& t2);
+bool operator != (const Teniser& t1, const Teniser& t2)
+{
+    return !(t1 == t2);
+}
 class Mec {
 protected:
-    Teniser* _prvi;
-    Teniser* _drugi;
+    Teniser* _prvi = nullptr;
+    Teniser* _drugi = nullptr;
     Vektor<pair<int, int>> _setovi;
 public:
-    Mec();
+    Mec() {}
     //Z5.2
-    Mec(Teniser prvi, Teniser drugi);
+    Mec(Teniser prvi, Teniser drugi)
+    {
+        SetPrvi(prvi);
+        SetDrugi(drugi);
+    }
     //Z5.3
-    Mec(const Mec& obj);
-    //Z5.4
-    Mec(Mec&& obj);
+    Mec(const Mec& obj)
+    {
+        SetPrvi(obj.GetPrvi());
+        SetDrugi(obj.GetDrugi());
+        SetSetovi(obj.GetSetovi());
+    }
+
     //Z5.5
-    Teniser GetPrvi() const;
-    Teniser GetDrugi() const;
-    Vektor<pair<int, int>> GetSetovi() const;
+    Teniser GetPrvi() const {
+        if (_prvi == nullptr)
+            return Teniser();
+        return *_prvi;
+    }
+    Teniser GetDrugi() const
+    {
+        if (_drugi == nullptr)
+            return Teniser();
+        return *_drugi;
+    }
+    Vektor<pair<int, int>> GetSetovi() const
+    {
+        return _setovi;
+    }
     //Z5.6
-    void SetPrvi(Teniser teniser);
-    void SetDrugi(Teniser teniser);
-    void SetSetovi(Vektor<pair<int, int>> setovi);
+    void SetPrvi(Teniser teniser)
+    {
+        if (_prvi == nullptr)
+            _prvi = new Teniser();
+        *_prvi = teniser;
+    }
+    void SetDrugi(Teniser teniser)
+    {
+        if (_drugi == nullptr)
+            _drugi = new Teniser;
+        *_drugi = teniser;
+    }
+    void SetSetovi(Vektor<pair<int, int>> setovi)
+    {
+        _setovi = setovi;
+    }
     //Z5.7
-    void DodajSet(int bodovi1, int bodovi2);
+    void DodajSet(int bodovi1, int bodovi2)
+    {
+        _setovi += pair<int, int>(bodovi1, bodovi2);
+    }
     //Z5.8
-    Mec& operator = (const Mec& obj);
+    Mec& operator = (const Mec& obj)
+    {
+        if (this != &obj)
+        {
+            SetPrvi(obj.GetPrvi());
+            SetDrugi(obj.GetDrugi());
+            SetSetovi(obj.GetSetovi());
+        }
+        return *this;
+    }
     //Z5.9
-    ~Mec();
+    ~Mec() {
+        delete _prvi;
+        _prvi = nullptr;
+        delete _drugi;
+        _drugi = nullptr;
+    }
 };
 //Z5.10
-ostream& operator <<(ostream& COUT, const Mec& teniskiMec);
+ostream& operator <<(ostream& COUT, const Mec& teniskiMec)
+{
+    COUT << "Prvi teniser: " << teniskiMec.GetPrvi()<<endl;
+    COUT << "Drugi teniser: " << teniskiMec.GetDrugi() << endl;
+    COUT << "Setovi: " << endl;
+    COUT << teniskiMec.GetSetovi() << endl;
+    return COUT;
+}
 //Z5.11
-bool operator == (const Mec& m1, const Mec& m2);
-bool operator != (const Mec& m1, const Mec& m2);
+bool operator == (const Mec& m1, const Mec& m2)
+{
+    if (m1.GetPrvi() != m2.GetPrvi() || m1.GetDrugi() != m2.GetDrugi() || m1.GetSetovi() != m2.GetSetovi())
+        return false;
+    return true;
+}
+bool operator != (const Mec& m1, const Mec& m2)
+{
+    return !(m1 == m2);
+}
 auto IspisiPoruku = [](const char* tipFunkcije, bool success) {
     cout << tipFunkcije << " se izvrsio " << ((success) ? "uspjesno!" : "bezuspjesno!") << endl;
 };
@@ -526,7 +651,7 @@ void Zadatak1() {
     cout << endl;
 
     //:::::::::::::::::: MAP ::::::::::::::::::
-   
+
     //:::::::::::::::::: COPY CTOR | MOVE CTOR | OPERATOR '=' ::::::::::::::::::
     Vektor<int> v2(slucajniBrojevi);
     IspisiPoruku("Copy ctor", slucajniBrojevi == v2);
@@ -573,18 +698,18 @@ void Zadatak2() {
     v4 = rijeci;
     IspisiPoruku("Operator '='", rijeci == v4);
 
-  
+
     cout << endl << "Dealokacija..." << endl;
 }
 void Zadatak3() {
     Osoba putin;
-    putin.SetJmbg ( "0710952215003");
-    putin.SetIme ( "Vladimir");
-    putin.SetPrezime( "Putin");
-    putin.SetSpol( Spol::Muski);
-    putin.SetBojaKose ( Boja::Plava);
-    putin.SetBojaKose ( Boja::Plava);
-    putin.SetVisina ( 1.68f);
+    putin.SetJmbg("0710952215003");
+    putin.SetIme("Vladimir");
+    putin.SetPrezime("Putin");
+    putin.SetSpol(Spol::Muski);
+    putin.SetBojaKose(Boja::Plava);
+    putin.SetBojaKose(Boja::Plava);
+    putin.SetVisina(1.68f);
     cout << putin << endl;
     //:::::::::::::::::: COPY CTOR | MOVE CTOR | OPERATOR '=' ::::::::::::::::::
     try
@@ -602,6 +727,22 @@ void Zadatak3() {
     {
         cout << greska << endl;
     }
+
+    //try
+    //{
+    //    Osoba o2(putin);
+    //    IspisiPoruku("Copy ctor", putin == o2);
+    //    Osoba o3(move(o2));
+    //    IspisiPoruku("Move ctor", putin == o3);
+    //    Osoba o4;
+    //    o4 = putin;
+    //    IspisiPoruku("Operator '='", putin == o4);
+    //    cout << endl << "Dealokacija..." << endl;
+    //}
+    //catch (const exception& err)
+    //{
+    //    cout << err.what();
+    //}
 }
 void Zadatak4() {
     Vektor<const char*> titule;
@@ -611,13 +752,13 @@ void Zadatak4() {
     Teniser djole;
     djole.SetJmbg("2205986345113");
     djole.SetIme("Novak");
-    djole.SetPrezime( "Djokovic");
-    djole.SetSpol( Spol::Muski);
-    djole.SetVisina ( 1.88f);
-    djole.SetBojaKose( Boja::Crna);
-    djole.SetBojaOciju ( Boja::Zelena);
-    djole.SetOsvojeniNaslovi ( titule);
-    djole.SetRanking (11063);
+    djole.SetPrezime("Djokovic");
+    djole.SetSpol(Spol::Muski);
+    djole.SetVisina(1.88f);
+    djole.SetBojaKose(Boja::Crna);
+    djole.SetBojaOciju(Boja::Zelena);
+    djole.SetOsvojeniNaslovi(titule);
+    djole.SetRanking(11063);
     cout << djole << endl;
     //:::::::::::::::::: COPY CTOR | MOVE CTOR | OPERATOR '=' ::::::::::::::::::
     try {
@@ -638,26 +779,26 @@ void Zadatak4() {
 
 void Zadatak5() {
     Teniser djole;
-    djole.SetJmbg ( "2205986345113");
-    djole.SetIme ("Novak");
-    djole.SetPrezime ("Djokovic");
-    djole.SetSpol( Spol::Muski);
-    djole.SetVisina ( 1.88f);
-    djole.SetBojaKose (Boja::Crna);
-    djole.SetBojaOciju (Boja::Zelena);
-    djole.SetRanking (11063);
+    djole.SetJmbg("2205986345113");
+    djole.SetIme("Novak");
+    djole.SetPrezime("Djokovic");
+    djole.SetSpol(Spol::Muski);
+    djole.SetVisina(1.88f);
+    djole.SetBojaKose(Boja::Crna);
+    djole.SetBojaOciju(Boja::Zelena);
+    djole.SetRanking(11063);
     Teniser nadal;
-    nadal.SetJmbg ("2304984344414");
-    nadal.SetIme ("Rafael");
-    nadal.SetPrezime ("Nadal");
-    nadal.SetSpol (Spol::Muski);
-    nadal.SetVisina ( 1.83f);
-    nadal.SetBojaKose (Boja::Crna);
-    nadal.SetBojaOciju (Boja::Crna);
-    nadal.SetRanking ( 9500);
+    nadal.SetJmbg("2304984344414");
+    nadal.SetIme("Rafael");
+    nadal.SetPrezime("Nadal");
+    nadal.SetSpol(Spol::Muski);
+    nadal.SetVisina(1.83f);
+    nadal.SetBojaKose(Boja::Crna);
+    nadal.SetBojaOciju(Boja::Crna);
+    nadal.SetRanking(9500);
     Mec finale;
-    finale.SetPrvi ( djole);
-    finale.SetDrugi (nadal);
+    finale.SetPrvi(djole);
+    finale.SetDrugi(nadal);
     finale.DodajSet(6, 1);
     finale.DodajSet(5, 7);
     finale.DodajSet(6, 4);
@@ -711,4 +852,3 @@ int main() {
     }
     return 0;
 }
-
