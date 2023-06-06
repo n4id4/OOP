@@ -176,7 +176,7 @@ void Zadatak2() {
 	Osoba louis("Louis", "Neighbors", Datum(1, 10, 1995), "Mostar, BiH", 1.73, 1);
 	Osoba kash("Kash", "Register", Datum(2, 10, 1995), "Mostar, BiH", 1.74, 1);
 	Osoba jack("Jack", "Daniels", Datum(3, 10, 1995), "Mostar, BiH", 1.75, 1);
-	Osoba o1(louis), o2(move(kash)), o3;
+	Osoba o1(louis), o2(kash), o3;
 	o3 = jack;
 	vector<Osoba> osobe;
 	osobe.push_back(o1);
@@ -192,7 +192,7 @@ void Zadatak3() {
 	Fudbaler elonMusk("Elon", "Musk", Datum(28, 6, 1971), "Pretoria, South Africa", 1.73, 1, "Veznjak");
 	Fudbaler michioKaku("Michio", "Kaku", Datum(23, 6, 1956), "San Jose, Kalifornija (SAD)", 1.70, 1, "Veznjak");
 
-	Fudbaler f1(indyNeidell), f2(threeBlueOneBrown), f3(move(euler)), f4(move(elonMusk)), f5;
+	Fudbaler f1(indyNeidell), f2(threeBlueOneBrown), f3(euler), f4(elonMusk), f5;
 	f5 = michioKaku;
 	vector<Fudbaler> neverWokAlone;
 	neverWokAlone.push_back(f1);
@@ -218,7 +218,7 @@ void Zadatak4() {
 	bacunaMatata.DodajFudbalera(&jordanPeterson);
 	bacunaMatata.DodajFudbalera(&markManson);
 	bacunaMatata.DodajFudbalera(&dalaiLama);
-	FudbalskiTim tim1(move(bacunaMatata));
+	FudbalskiTim tim1(bacunaMatata);
 	FudbalskiTim tim2(tim1);
 	bacunaMatata = tim2;
 	cout << bacunaMatata;
@@ -265,7 +265,7 @@ void Zadatak5() {
 	clashOfTheTitans.DodajGol(0, &gandhi, 81);
 	clashOfTheTitans.DodajGol(0, &gandhi, 90);
 	Utakmica u2(clashOfTheTitans);
-	Utakmica u3(move(u2));
+	Utakmica u3(u2);
 	Utakmica gameOfTheCentury;
 	gameOfTheCentury = u3;
 	cout << gameOfTheCentury << endl;
